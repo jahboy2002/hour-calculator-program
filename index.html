@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมคำนวณชั่วโมงการสอน</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffe4b5;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            display: inline-block; /* ให้พอดีกับเนื้อหา */
+            text-align: center;
+        }
+        h2 {
+            color: #663399;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            white-space: nowrap; /* ป้องกันการขึ้นบรรทัดใหม่ */
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            width: 100%;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .result {
+            background-color: #faf3dd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 1.2em;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid #ff6347;
+        }
+        .result span {
+            font-weight: bold;
+            color: #ff4500;
+            font-size: 1.4em;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #ff4500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>โปรแกรมคำนวณชั่วโมงการสอน</h2>
+        <label for="sessionsPerWeek">จำนวนคาบที่สอนในแต่ละห้อง:</label>
+        <input type="number" id="sessionsPerWeek" placeholder="" min="0">
+
+        <label for="weeks">จำนวนที่สอนทั้งหมดในหนึ่งสัปดาห์:</label>
+        <input type="number" id="weeks" placeholder="" min="0">
+
+        <button onclick="calculateHours()">คำนวณ</button>
+
+        <div id="result" class="result" style="display: none;">
+            <span id="hoursOutput">0 ชั่วโมง</span>
+            <span id="minutesOutput">0 นาที</span>
+        </div>
+    </div>
+
+    <script>
+        function calculateHours() {
+            const sessionsPerWeek = document.getElementById("sessionsPerWeek").value;
+            const weeks = document.getElementById("weeks").value;
+            const minutesPerSession = 50;
+
+            // คำนวณจำนวนคาบทั้งหมดและแปลงเป็นนาที
+            const totalSessions = sessionsPerWeek * weeks;
+            const totalMinutes = totalSessions * minutesPerSession;
+
+            // แปลงเป็นชั่วโมงและนาที
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+
+            // แสดงผลลัพธ์ในบรรทัดเดียวกัน
+            document.getElementById("hoursOutput").innerText = hours + " ชั่วโมง";
+            document.getElementById("minutesOutput").innerText = minutes + " นาที";
+            document.getElementById("result").style.display = "flex";
+        }
+    </script>
+</body>
+</html>
