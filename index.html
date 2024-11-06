@@ -16,17 +16,17 @@
         }
         .container {
             background-color: #ffe4b5;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-            display: inline-block; /* ให้พอดีกับเนื้อหา */
+            display: inline-block;
             text-align: center;
         }
-        h2 {
+        h2, .total-title {
             color: #663399;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 1.5em;
-            white-space: nowrap; /* ป้องกันการขึ้นบรรทัดใหม่ */
+            white-space: nowrap;
         }
         label {
             font-weight: bold;
@@ -35,25 +35,25 @@
         }
         input[type="number"] {
             padding: 8px;
-            width: 100%;
+            width: calc(100% - 16px);
             margin-top: 5px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            box-sizing: border-box;
             text-align: center;
         }
         .result {
             background-color: #faf3dd;
-            padding: 15px;
+            padding: 10px;
             border-radius: 10px;
             margin-top: 15px;
             font-size: 1.2em;
             color: #333;
-            display: flex;
+            display: inline-flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
             border: 2px solid #ff6347;
+            width: auto;
         }
         .result span {
             font-weight: bold;
@@ -78,38 +78,93 @@
 <body>
     <div class="container">
         <h2>โปรแกรมคำนวณชั่วโมงการสอน</h2>
-        <label for="sessionsPerWeek">จำนวนคาบที่ใช้สอนใน 1 ครั้ง:</label>
-        <input type="number" id="sessionsPerWeek" placeholder="" min="0">
-
-        <label for="weeks">จำนวนคาบสอนทั้งหมดในหนึ่งสัปดาห์:</label>
-        <input type="number" id="weeks" placeholder="" min="0">
-
-        <button onclick="calculateHours()">คำนวณ</button>
+        
+        <!-- การคำนวณเวลารวมตามคาบเรียน -->
+        <label for="sessionsPerWeek">จำนวนชั่วโมงต่อสัปดาห์</label>
+        <input type="number" id="sessionsPerWeek" placeholder="กรอกจำนวนคาบ" min="0">
+        <label for="weeks">จจำนวนคาบสอนทั้งหมดต่อสัปดาห์</label>
+        <input type="number" id="weeks" placeholder="กรอกจำนวนสัปดาห์" min="0">
+        <button id="calculateHoursButton" onclick="calculateHours()">คำนวณเวลาสอน</button>
+        <button id="resetHoursButton" onclick="resetHours()" style="display: none;">รีเซ็ต</button>
 
         <div id="result" class="result" style="display: none;">
             <span id="hoursOutput">0 ชั่วโมง</span>
             <span id="minutesOutput">0 นาที</span>
         </div>
+
+        <!-- ข้อความ "จำนวนชั่วโมงสอนรวม" -->
+        <h2 class="total-title">จำนวนชั่วโมงสอนรวม</h2>
+
+        <!-- การคำนวณเวลาจากการกรอกชั่วโมงและนาที -->
+        <label for="inputHours">จำนวนชั่วโมง:</label>
+        <input type="number" id="inputHours" placeholder="กรอกจำนวนชั่วโมง" min="0">
+        <label for="inputMinutes">จำนวน(นาที):</label>
+        <input type="number" id="inputMinutes" placeholder="กรอกจำนวน(นาที)" min="0">
+        <button id="totalTimeButton" onclick="calculateTotalTime()">คำนวณเวลารวม</button>
+        <button id="resetTotalTimeButton" onclick="resetTotalTime()" style="display: none;">รีเซ็ต</button>
+
+        <div id="totalResult" class="result" style="display: none;">
+            <span id="totalHoursOutput">0 ชั่วโมง</span>
+            <span id="totalMinutesOutput">0 นาที</span>
+        </div>
     </div>
 
     <script>
+        // ฟังก์ชันคำนวณเวลาตามคาบเรียน
         function calculateHours() {
             const sessionsPerWeek = document.getElementById("sessionsPerWeek").value;
             const weeks = document.getElementById("weeks").value;
             const minutesPerSession = 50;
 
-            // คำนวณจำนวนคาบทั้งหมดและแปลงเป็นนาที
             const totalSessions = sessionsPerWeek * weeks;
             const totalMinutes = totalSessions * minutesPerSession;
 
-            // แปลงเป็นชั่วโมงและนาที
             const hours = Math.floor(totalMinutes / 60);
             const minutes = totalMinutes % 60;
 
-            // แสดงผลลัพธ์ในบรรทัดเดียวกัน
             document.getElementById("hoursOutput").innerText = hours + " ชั่วโมง";
             document.getElementById("minutesOutput").innerText = minutes + " นาที";
-            document.getElementById("result").style.display = "flex";
+            document.getElementById("result").style.display = "inline-flex";
+            
+            // ซ่อนปุ่มคำนวณและแสดงปุ่มรีเซ็ต
+            document.getElementById("calculateHoursButton").style.display = "none";
+            document.getElementById("resetHoursButton").style.display = "inline-block";
+        }
+
+        // ฟังก์ชันคำนวณเวลาจากชั่วโมงและนาทีที่ผู้ใช้กรอก
+        function calculateTotalTime() {
+            let inputHours = parseInt(document.getElementById("inputHours").value) || 0;
+            let inputMinutes = parseInt(document.getElementById("inputMinutes").value) || 0;
+
+            // แปลงนาทีส่วนเกินเป็นชั่วโมง
+            inputHours += Math.floor(inputMinutes / 60);
+            inputMinutes = inputMinutes % 60;
+
+            document.getElementById("totalHoursOutput").innerText = inputHours + " ชั่วโมง";
+            document.getElementById("totalMinutesOutput").innerText = inputMinutes + " นาที";
+            document.getElementById("totalResult").style.display = "inline-flex";
+            
+            // ซ่อนปุ่มคำนวณและแสดงปุ่มรีเซ็ต
+            document.getElementById("totalTimeButton").style.display = "none";
+            document.getElementById("resetTotalTimeButton").style.display = "inline-block";
+        }
+
+        // ฟังก์ชันรีเซ็ตสำหรับการคำนวณเวลาตามคาบเรียน
+        function resetHours() {
+            document.getElementById("sessionsPerWeek").value = '';
+            document.getElementById("weeks").value = '';
+            document.getElementById("result").style.display = "none";
+            document.getElementById("calculateHoursButton").style.display = "inline-block";
+            document.getElementById("resetHoursButton").style.display = "none";
+        }
+
+        // ฟังก์ชันรีเซ็ตสำหรับการคำนวณเวลารวมจากชั่วโมงและนาที
+        function resetTotalTime() {
+            document.getElementById("inputHours").value = '';
+            document.getElementById("inputMinutes").value = '';
+            document.getElementById("totalResult").style.display = "none";
+            document.getElementById("totalTimeButton").style.display = "inline-block";
+            document.getElementById("resetTotalTimeButton").style.display = "none";
         }
     </script>
 </body>
